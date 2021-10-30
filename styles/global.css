@@ -4,10 +4,10 @@
   --white: #fff;
   --light-border: #ccc;
   --danger: #ff0000;
-  --primary-color: #a4a4f7;
-  --primary-color-light: #7373f9;
+  --primary-color: #ec62ce;
+  --primary-color-light: #ac2e77;
   --secondary-color: #f0f8ff;
-  --shadow-color: #ddd;
+  --shadow-color: rgb(215, 238, 245);
   font-family: 'Poppins', sans-serif;
   font-size: 12px;
 }
@@ -40,7 +40,7 @@
   background-color: var(--secondary-color);
   padding: 2rem;
   border-radius: 5px;
-  box-shadow: 12px 12px 10px var(--shadow-color);
+  box-shadow: 4px 2px var(--shadow-color);
   flex: 1;
 }
 
