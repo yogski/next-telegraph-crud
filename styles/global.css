@@ -83,13 +83,22 @@
   border-radius: 5px;
 }
 
-.btn:hover {
-  background-color: var(--primary-color-light);
-}
-
 .login-btn {
   background-color: var(--primary-color);
   color: var(--white);
+}
+
+.login-btn:hover {
+  opacity: 80%;;
+}
+
+.delete-btn {
+  background-color: maroon;
+  color: var(--light-border);
+}
+
+.delete-btn:hover {
+  opacity: 80%;
 }
 
 .hello-user {

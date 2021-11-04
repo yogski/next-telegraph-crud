@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const getData = async (config) => {
   const response = await axios.get(process.env.DATA_SOURCE_TELEGRAPH, {...config});
-  return JSON.parse(response.data.result.content[0]);
+  return JSON.parse(response.data.result.content[0].children[0]);
 }
 
 export const insertData = async (apiKey, dataTitle, tableName, data) => {
@@ -11,7 +11,7 @@ export const insertData = async (apiKey, dataTitle, tableName, data) => {
     params: {
       access_token: apiKey,
       title: dataTitle,
-      content: JSON.stringify(data),
+      content: JSON.stringify([{tag:"p",children: [JSON.stringify(data)]}]),
       return_content: "true"
     },
   });

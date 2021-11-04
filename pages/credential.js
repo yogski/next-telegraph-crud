@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { nanoid } from 'nanoid'
 import dayjs from 'dayjs'
-import { getData, insertData } from '../helpers/telegraphRequest'
+import { getCredential, setCredential } from '../helpers/localStorage'
 
 const IndexPage = ({ quoteList }) => {
   const [quotes, setQuotes] = useState(quoteList)
@@ -12,17 +12,8 @@ const IndexPage = ({ quoteList }) => {
     handleSubmit,
   } = useForm();
 
-
-
-  const onSubmit = async ({ quote, apikey, datatitle, tablename }) => {
-    const newQuote = {
-      id : nanoid(),
-      created_at : dayjs().toISOString(),
-      quote : quote
-    }
-    console.log([...quotes, newQuote]);
-    const newData = await insertData(apikey, datatitle, tablename, [...quotes, newQuote]);
-    console.log(newData);
+  const onSubmit = async ({ apikey, datatitle, tablename }) => {
+    setCredential(apikey, tablename, datatitle);
   }
 
   return (
@@ -30,21 +21,7 @@ const IndexPage = ({ quoteList }) => {
     <div className="container">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="row">
-          <h3 className="form-header">My Overheard Quotes</h3>
-        </div>
-        <div className="row">
-          <input
-            type="textarea"
-            placeholder="What did you hear?"
-            {...register('quote', {
-              required: { value: true, message: 'Quote is required' }
-            })}
-            className={'form-field' + (errors.quote ? ' has-error' : '')}
-            autoComplete="quote"
-          />
-          {errors.quote && (
-            <span className="error-label">{errors.quote.message}</span>
-          )}
+          <h3 className="form-header">Credential Input</h3>
         </div>
 
         <div className="row">
@@ -94,16 +71,15 @@ const IndexPage = ({ quoteList }) => {
 
         <div className="row">
           <button type="submit" className="btn login-btn">
-            Add Quote
+            Save Credential
+          </button>
+        </div>
+        <div className="row">
+          <button className="btn delete-btn" onClick={() => {console.log('deleted stuff')}}>
+            Delete Credential
           </button>
         </div>
       </form>
-    </div>
-
-    <div className="container">
-      <div className="row">
-
-      </div>
     </div>
     </>
   )
