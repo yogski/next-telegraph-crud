@@ -5,7 +5,7 @@ export function getCredential() {
 
   // security countermeasure?
 
-  return {...JSON.parse(tokenData), ...JSON.parse(tableData), ...JSON.parse(titleData)};
+  return {token: tokenData, table: tableData, title: titleData};
 }
 
 export function setCredential(token, table, title) {
@@ -15,7 +15,11 @@ export function setCredential(token, table, title) {
 }
 
 export function checkCredentialExists() {
-  return (localStorage.getItem('_token') && localStorage.getItem('_title') && localStorage.getItem('_table'));
+  return (
+    localStorage.getItem('_token') !== undefined &&
+    localStorage.getItem('_title') !== undefined &&
+    localStorage.getItem('_table') !== undefined
+  );
 }
 
 export function clearCredential() {
