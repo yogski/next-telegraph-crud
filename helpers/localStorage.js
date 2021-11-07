@@ -15,10 +15,11 @@ export function setCredential(token, table, title) {
 }
 
 export function checkCredentialExists() {
+  console.log(localStorage.getItem('_token'), localStorage.getItem('_title'), localStorage.getItem('_table'))
   return (
-    localStorage.getItem('_token') !== undefined &&
-    localStorage.getItem('_title') !== undefined &&
-    localStorage.getItem('_table') !== undefined
+    localStorage.getItem('_token') !== null &&
+    localStorage.getItem('_title') !== null &&
+    localStorage.getItem('_table') !== null
   );
 }
 

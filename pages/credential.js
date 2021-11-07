@@ -14,11 +14,11 @@ const IndexPage = ({ quoteList }) => {
     handleSubmit,
   } = useForm();
 
-    // fetch data
-    useEffect(() => {
-      setHasCredential(checkCredentialExists())
-      setCurrentCredential(getCredential());
-    }, []) 
+  // fetch data
+  useEffect(() => {
+    setHasCredential(checkCredentialExists())
+    setCurrentCredential(getCredential());
+  }, []) 
 
   const onSubmit = async ({ apikey, datatitle, tablename }) => {
     setCredential(apikey, tablename, datatitle);

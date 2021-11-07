@@ -29,6 +29,12 @@
   margin: 10px 20px;
 }
 
+.row .row-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .row-remember {
   display: flex;
   align-items: center;
@@ -104,3 +110,9 @@
 .hello-user {
   font-size: 2rem;
 }
+
+.warning-text {
+  color: var(--danger);
+  text-align: center;
+}
+
