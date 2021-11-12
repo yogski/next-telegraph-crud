@@ -4,14 +4,25 @@ import { useForm } from 'react-hook-form'
 import { nanoid } from 'nanoid'
 import dayjs from 'dayjs'
 import { getData, insertData } from '../helpers/telegraphRequest'
-import { checkCredentialExists } from '../helpers/localStorage'
+import { checkCredentialExists, getCredential } from '../helpers/localStorage'
 
 const IndexPage = ({ quoteList }) => {
   const [quotes, setQuotes] = useState(quoteList)
   const [hasCredential, setHasCredential] = useState(false);
+  const [credentials, setCredentials] = useState({
+    apikey: "",
+    tablename: "",
+    datatitle: ""
+  })
 
   useEffect(() => {
     setHasCredential(checkCredentialExists())
+    let creds = getCredential();
+    setCredentials({
+      apikey: creds.token,
+      tablename: creds.table,
+      datatitle: creds.title
+    })
   }, []) 
 
   const {
@@ -22,15 +33,18 @@ const IndexPage = ({ quoteList }) => {
 
   const rt = useRouter();
 
-  const onSubmit = async ({ quote, apikey, datatitle, tablename }) => {
+  const onSubmit = async ({ quote }) => {
     const newQuote = {
       id : nanoid(),
       created_at : dayjs().toISOString(),
       quote : quote
     }
-    console.log([...quotes, newQuote]);
-    const newData = await insertData(apikey, datatitle, tablename, [...quotes, newQuote]);
-    console.log(newData);
+    const newData = await insertData(credentials.apikey, credentials.datatitle, credentials.tablename, [...quotes, newQuote]);
+    if (newData.ok) {
+      alert('New quote added.');
+    } else {
+      alert('ERROR : failed to add new code.', newData)
+    }
   }
 
   return (

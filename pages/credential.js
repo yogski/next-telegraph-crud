@@ -1,29 +1,57 @@
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { nanoid } from 'nanoid'
-import dayjs from 'dayjs'
-import { getCredential, setCredential, checkCredentialExists } from '../helpers/localStorage'
+import { useRouter } from 'next/router'
+import { getCredential, setCredential, checkCredentialExists, clearCredential } from '../helpers/localStorage'
 
 const IndexPage = ({ quoteList }) => {
-  const [quotes, setQuotes] = useState(quoteList);
+  const [inputs, setInputs] = useState({
+    apikey: "",
+    tablename: "",
+    datatitle: ""
+  });
   const [hasCredential, setHasCredential] = useState(false);
-  const [currentCredential, setCurrentCredential] = useState({})
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
+  const rt = useRouter();
 
   // fetch data
   useEffect(() => {
     setHasCredential(checkCredentialExists())
-    setCurrentCredential(getCredential());
+    let credentials = getCredential()
+    setInputs({ 
+      apikey: credentials.token,
+      tablename: credentials.table,
+      datatitle: credentials.title
+    })
   }, []) 
 
   const onSubmit = async ({ apikey, datatitle, tablename }) => {
     setCredential(apikey, tablename, datatitle);
+    alert('Your credential has been saved.')
   }
 
+  const deleteCredential = () => {
+    clearCredential();
+    setInputs({ 
+      apikey: "",
+      tablename: "",
+      datatitle: ""
+    })
+    alert('Your credential has been cleared.')
+  }
+
+  const handleChange = (e) => {
+    console.log(e)
+    const value = e.target.value;
+    setInputs({
+      ...inputs,
+      [e.target.name]: value
+    });
+  }
+  
   return (
     <>
     <div className="container">
@@ -36,7 +64,8 @@ const IndexPage = ({ quoteList }) => {
           <input
             type="text"
             placeholder="Insert the API key"
-            value={ hasCredential ? currentCredential.token : null }
+            onChange={() => handleChange(this)}
+            value={inputs.apikey}
             {...register('apikey', {
               required: { value: true, message: 'API key is required' }
             })}
@@ -52,7 +81,8 @@ const IndexPage = ({ quoteList }) => {
           <input
             type="text"
             placeholder="Insert table name"
-            value={ hasCredential ? currentCredential.table : null }
+            onChange={() => handleChange(this)}
+            value={inputs.tablename}
             {...register('tablename', {
               required: { value: true, message: 'Table name is required' }
             })}
@@ -68,7 +98,8 @@ const IndexPage = ({ quoteList }) => {
           <input
             type="text"
             placeholder="Insert the data title"
-            value={ hasCredential ? currentCredential.title : null }
+            onChange={() => handleChange(this)}
+            value={inputs.datatitle}
             {...register('datatitle', {
               required: { value: true, message: 'Data title is required' }
             })}
@@ -86,16 +117,15 @@ const IndexPage = ({ quoteList }) => {
           </button>
         </div>
         <div className="row">
-          <button className="btn delete-btn" onClick={() => {console.log('deleted stuff')}}>
+          <button className="btn delete-btn" onClick={() => deleteCredential()}>
             Delete Credential
           </button>
         </div>
+        <div className="row">
+          <button className="pure-button pure-button-primary" onClick={() => rt.back()}>Back</button>
+        </div>
       </form>
     </div>
-
-    {
-
-    }
     </>
   )
 }
