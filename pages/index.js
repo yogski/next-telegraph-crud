@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { nanoid } from 'nanoid'
 import dayjs from 'dayjs'
-import { getData, insertData } from '../helpers/telegraphRequest'
+import { getDataServerSide, insertData } from '../helpers/telegraphRequest'
 import { checkCredentialExists, getCredential } from '../helpers/localStorage'
 
 const IndexPage = ({ quoteList }) => {
@@ -45,6 +45,7 @@ const IndexPage = ({ quoteList }) => {
     } else {
       alert('ERROR : failed to add new code.', newData)
     }
+    rt.reload();
   }
 
   return (
@@ -95,7 +96,7 @@ const IndexPage = ({ quoteList }) => {
 }
 
 export async function getStaticProps() {
-  const quoteList = await getData({});
+  const quoteList = await getDataServerSide({});
 
   return {
     props: {

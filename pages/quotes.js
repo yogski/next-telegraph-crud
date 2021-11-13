@@ -1,84 +1,106 @@
 import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
-import { getCredential, setCredential, checkCredentialExists, clearCredential } from '../helpers/localStorage'
+import { getCredential, setCredential, checkCredentialExists, clearCredential } from '../helpers/localStorage';
+import dayjs from 'dayjs';
+import { getData, getDataClientSide } from '../helpers/telegraphRequest';
+var relativeTime = require('dayjs/plugin/relativeTime');
 
-const IndexPage = ({ quoteList }) => {
-  const [quotes, setQuotes] = useState(quoteList);
+const QuotePage = () => {
+  const [quotes, setQuotes] = useState();
   const [hasCredential, setHasCredential] = useState(false);
-  const [currentCredential, setCurrentCredential] = useState({})
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-  } = useForm();
+  const [currentCredential, setCurrentCredential] = useState();
   const rt = useRouter();
+  dayjs.extend(relativeTime);
 
   // fetch data
   useEffect(() => {
-    setHasCredential(checkCredentialExists())
-    setCurrentCredential(getCredential());
-  }, []) 
+    const fetchData = async () => {
+      setHasCredential(checkCredentialExists())
+      if (hasCredential) {
+        
+        setCurrentCredential(getCredential());
+        const result = await getDataClientSide({}, `https://api.telegra.ph/getPage/${currentCredential.table}?return_content=true`)
+        console.log('result:',result)
+        setQuotes(result);
+      } 
+    };
 
-  const onSubmit = async ({ apikey, datatitle, tablename }) => {
-    setCredential(apikey, tablename, datatitle);
-    alert('Your credential has been saved.')
+    fetchData()
+  }, [])
+
+  
+
+  const generateTableHeader = () => {
+    return (
+    <thead>
+      <tr>
+          <th>No</th>
+          <th>Quote</th>
+          <th>Added</th>
+          <th>Actions</th>
+      </tr>
+    </thead>
+    )
   }
 
-  const deleteCredential = () => {
-    clearCredential();
-    alert('Your credential has been cleared.')
+  const generateTableContent = (quoteList) => {
+    return(
+      <tbody> 
+      {
+        quoteList.map((quote,idx) => {
+          let created = dayjs(quote.created_at).fromNow()
+          return (
+            <tr key={idx + 1}>
+              <th>{idx + 1}</th>
+              <th>{quote.quote}</th>
+              <th>{created}</th>
+            </tr>
+          )
+        })
+      }
+      </tbody>
+    )
+  }
+
+  const generateTable = (quoteList) => {
+    if (!quoteList || quoteList.length === 0) {
+      return (<span><p>Data Not Found</p></span>)
+    } else {
+      return (
+        <table className="pure-table pure-table-horizontal pure-table-striped table-quotes">
+          {generateTableHeader()}
+          {generateTableContent(quoteList)}
+        </table>
+      )
+    }
   }
 
   return (
     <>
     <div className="container tables">
-    <div className="row">
-    <table className="pure-table pure-table-horizontal pure-table-striped table-quotes">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Make</th>
-            <th>Model</th>
-            <th>Year</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>1</td>
-            <td>Honda</td>
-            <td>Accord</td>
-            <td>2009</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Toyota</td>
-            <td>Camry</td>
-            <td>2012</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Hyundai</td>
-            <td>Elantra</td>
-            <td>2010</td>
-        </tr>
-    </tbody>
-    </table>
-    </div>
-
     <form>
+      <div className="row">
+        {generateTable(quotes)}
+      </div>
+
       <div className="row">
       <button className="pure-button pure-button-primary" onClick={() => rt.route('/')}>Back</button>
       </div>
     </form>
 
     </div>
-    
-    {
-
-    }
     </>
   )
 }
 
-export default IndexPage
+// export async function getStaticProps() {
+//   const quoteList = await getData({});
+
+//   return {
+//     props: {
+//       quoteList
+//     },
+//   }
+// }
+
+export default QuotePage

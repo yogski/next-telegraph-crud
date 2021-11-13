@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
 import { getCredential, setCredential, checkCredentialExists, clearCredential } from '../helpers/localStorage'
 
-const IndexPage = ({ quoteList }) => {
+const CredentialsPage = ({ quoteList }) => {
   const [inputs, setInputs] = useState({
     apikey: "",
     tablename: "",
@@ -130,4 +130,4 @@ const IndexPage = ({ quoteList }) => {
   )
 }
 
-export default IndexPage
+export default CredentialsPage
